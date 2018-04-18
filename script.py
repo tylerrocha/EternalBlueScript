@@ -63,7 +63,24 @@ if not exploitable:
 	print "No vulnerable targets"
 	sys.exit()
 
-for target in IPs_to_hack:
-	attack(target)
+target = IPs_to_hack[0]
+
+if exploitable > 1:
+	while True: 
+		print("Which IP would you like to hAcK?")
+		n = 1
+		for ip in IPs_to_hack:
+			print(n + ") " + ip)
+			n++
+
+		result = raw_input("Enter a number: ")
+		try: 
+	        target = IPs_to_hack[int(result)-1]
+	        break;
+	    except ValueError:
+	    	print("Invalid input, try again")
+	        
+print("Attacking target IP: " + target)
+attack(target)
 
 
