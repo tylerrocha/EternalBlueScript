@@ -65,21 +65,24 @@ if not exploitable:
 
 target = IPs_to_hack[0]
 
-if exploitable > 1:
-	while True: 
+if exploitable > 0:
+	while True:
 		print("Which IP would you like to hAcK?")
 		n = 1
 		for ip in IPs_to_hack:
-			print(n + ") " + ip)
-			n++
+			print(str(n) + ") " + str(ip))
+			n += 1
 
 		result = raw_input("Enter a number: ")
-		try: 
-	        target = IPs_to_hack[int(result)-1]
-	        break;
-	    except ValueError:
-	    	print("Invalid input, try again")
-	        
+		try:
+			num = int(result)
+			if(num <= len(IPs_to_hack) and num > 0):
+				target = IPs_to_hack[num - 1]
+				break
+			print("Invalid input, try again")
+		except ValueError:
+			print("Invalid input, try again")
+
 print("Attacking target IP: " + target)
 attack(target)
 
