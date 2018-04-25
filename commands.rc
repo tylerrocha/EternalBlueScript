@@ -2,5 +2,7 @@ getsystem
 sysinfo
 ipconfig
 ps
-hashdump
+run winenum
+run getcountermeasure
+run post/windows/gather/credentials/credential_collector
 screenshot
