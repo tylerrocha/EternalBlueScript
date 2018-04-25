@@ -17,5 +17,3 @@ Run with the following command:
 ### Description
 
 This tool scans for vulnerable hosts by using metasploit's smb_ms17_010 scanner and then attacks using metasploit's ms17_010_eternalblue exploit. Upon success a meterpreter shell opens and automatically executes common post-exploitation commands to exfiltrate password hashes and other network and system information. These  post-exploit commands can be altered by editing ```commands.rc```. The full scan results are saved to ```scanner.log``` and all exploit output is saved to ```spool.log```.
-
-Current version is for Mac OS!
